@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:listening_app/component/checkbox.dart';
 import 'package:listening_app/component/lgoin_text.dart';
 import 'package:listening_app/component/text_form.dart';
 import 'package:listening_app/component/text_icon_button_transition.dart';
@@ -9,14 +8,15 @@ import 'package:listening_app/view_model/login_view_model.dart';
 
 import '../component/text_button_transition.dart';
 
-class loginView extends ConsumerWidget {
-  const loginView({super.key});
+class LoginView extends ConsumerWidget {
+  const LoginView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authNotifier = ref.watch(authProvider);
     final inputMail = ref.watch(inputLoginMail);
     final inputPassword = ref.watch(inputLoginPassword);
+    final isPasswordHidden = ref.watch(isHidden);
 
     return SafeArea(
       child: Scaffold(
@@ -26,41 +26,47 @@ class loginView extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const LoginViewText(
+                const CompLoginViewText(
                   text: 'LOG IN',
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
-                const LoginViewText(text: '必要なログイン情報をご入力ください。'),
+                const CompLoginViewText(text: '必要なログイン情報をご入力ください。'),
                 const SizedBox(
                   height: 30,
                 ),
-                const ToggleButton(),
+                const CompToggleButton(),
                 const SizedBox(
                   height: 20,
                 ),
-                const LoginViewText(text: 'メールアドレス'),
+                const CompLoginViewText(text: 'メールアドレス'),
                 SizedBox(
                   height: 50,
-                  child: TextForm(
+                  child: CompTextForm(
                     textController: inputMail,
                   ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                const LoginViewText(text: 'パスワード'),
+                const CompLoginViewText(text: 'パスワード'),
                 SizedBox(
                   height: 50,
-                  child: TextForm(
+                  child: CompTextForm(
                     textController: inputPassword,
+                    isObScureText: isPasswordHidden,
                   ),
                 ),
-                const Row(
+                Row(
                   children: [
-                    CheckBox(),
-                    LoginViewText(
-                      text: 'パスワードを保存する',
+                    // CompCheckBox(),
+                    Checkbox(
+                        value: isPasswordHidden,
+                        onChanged: (value) {
+                          ref.read(isHidden.notifier).state = !isPasswordHidden;
+                        }),
+                    const CompLoginViewText(
+                      text: 'パスワードを非表示にする',
                       fontSize: 12,
                     )
                   ],
@@ -73,8 +79,8 @@ class loginView extends ConsumerWidget {
                     Expanded(
                       child: SizedBox(
                         height: 50,
-                        child: TextButtonTransition(
-                            nextPageName: '/first',
+                        child: CompTextButtonTransition(
+                            nextPageName: '/createUserPage',
                             text: 'ログイン',
                             backgroundColor: Colors.amber[800],
                             textColor: Colors.white,
@@ -83,7 +89,7 @@ class loginView extends ConsumerWidget {
                                 inputMail.text,
                                 inputPassword.text,
                               );
-                              Navigator.pushNamed(context, '/first');
+                              Navigator.pushNamed(context, '/createUserPage');
                             }),
                       ),
                     )
@@ -100,7 +106,8 @@ class loginView extends ConsumerWidget {
                   child: Row(
                     children: [
                       Expanded(flex: 3, child: Divider()),
-                      Expanded(flex: 0, child: LoginViewText(text: '   OR   ')),
+                      Expanded(
+                          flex: 0, child: CompLoginViewText(text: '   OR   ')),
                       Expanded(flex: 3, child: Divider()),
                     ],
                   ),
@@ -113,7 +120,7 @@ class loginView extends ConsumerWidget {
                     Expanded(
                       child: SizedBox(
                         height: 50,
-                        child: TextIconButtonTransition(
+                        child: CompTextIconButtonTransition(
                           text: '新規登録',
                           icon: const Icon(Icons.account_box_sharp),
                           nextPageName: '',

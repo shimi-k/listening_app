@@ -3,6 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:listening_app/repository/firebase_auth.dart';
 
+final authProvider =
+    ChangeNotifierProvider<AuthProvider>((ref) => AuthProvider());
+
+final inputLoginMail =
+    StateProvider.autoDispose((ref) => TextEditingController());
+
+final inputLoginPassword =
+    StateProvider.autoDispose((ref) => TextEditingController());
+
+final isHidden = StateProvider((ref) => true);
+
 class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   UserCredential? _userCredential;
@@ -57,12 +68,3 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-final authProvider =
-    ChangeNotifierProvider<AuthProvider>((ref) => AuthProvider());
-
-final inputLoginMail =
-    StateProvider.autoDispose((ref) => TextEditingController());
-
-final inputLoginPassword =
-    StateProvider.autoDispose((ref) => TextEditingController());

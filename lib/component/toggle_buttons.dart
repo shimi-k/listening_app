@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ToggleButton extends StatefulWidget {
-  const ToggleButton({super.key});
+class CompToggleButton extends StatefulWidget {
+  const CompToggleButton({super.key});
 
   @override
-  State<ToggleButton> createState() => _ToggleButtonState();
+  State<CompToggleButton> createState() => _CompToggleButtonState();
 }
 
-class _ToggleButtonState extends State<ToggleButton> {
+class _CompToggleButtonState extends State<CompToggleButton> {
   final List<bool> _isSelected = [false, false];
   final String _text1 = '契約者ID';
   final String _text2 = '口座番号';

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
-class CheckBox extends StatefulWidget {
-  const CheckBox({super.key});
+class CompCheckBox extends StatefulWidget {
+  const CompCheckBox({required this.callback, super.key});
+
+  final VoidCallback? callback;
 
   @override
-  State<CheckBox> createState() => _CheckBoxState();
+  State<CompCheckBox> createState() => _CompCheckBoxState();
 }
 
-class _CheckBoxState extends State<CheckBox> {
+class _CompCheckBoxState extends State<CompCheckBox> {
   bool _flag = false;
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,7 @@ class _CheckBoxState extends State<CheckBox> {
         setState(() {
           _flag = value!;
         });
+        widget.callback;
       },
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class TextIconButtonTransition extends StatelessWidget {
-  const TextIconButtonTransition({
+class CompTextIconButtonTransition extends StatelessWidget {
+  const CompTextIconButtonTransition({
     required this.text,
     required this.icon,
     required this.nextPageName,

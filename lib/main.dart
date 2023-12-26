@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:listening_app/firebase_options.dart';
-import 'package:listening_app/view/first_page.dart';
+import 'package:listening_app/view/create_user_page.dart';
 import 'package:listening_app/view/login_view.dart';
 
 void main() async {
@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       initialRoute: '/',
       routes: {
-        '/': (context) => const loginView(),
-        '/first': (context) => const FirstPage(),
+        '/': (context) => const LoginView(),
+        '/createUserPage': (context) => const CreateUserPage(),
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

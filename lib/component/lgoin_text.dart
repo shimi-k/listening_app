@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class LoginViewText extends StatelessWidget {
-  const LoginViewText({
+class CompLoginViewText extends StatelessWidget {
+  const CompLoginViewText({
     super.key,
     required this.text,
     this.fontWeight = FontWeight.normal,

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
-class TextForm extends StatelessWidget {
-  const TextForm({
+class CompTextForm extends StatelessWidget {
+  const CompTextForm({
     required this.textController,
+    this.isObScureText = false,
     super.key,
   });
+  final bool isObScureText;
 
   final TextEditingController textController;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      obscureText: isObScureText,
       controller: textController,
       decoration: InputDecoration(
         suffixIcon: IconButton(
