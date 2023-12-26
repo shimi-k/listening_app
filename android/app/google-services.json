@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "911738977182",
+    "project_id": "listening-firebase",
+    "storage_bucket": "listening-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911738977182:android:b6b8c6459dcc767f03348f",
+        "android_client_info": {
+          "package_name": "com.example.listening_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeHW7XUSY0exCJvbRFn9kZ-dWshIFHg1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
