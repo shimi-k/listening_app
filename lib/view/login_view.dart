@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:listening_app/component/lgoin_text.dart';
 import 'package:listening_app/component/text_form.dart';
 import 'package:listening_app/component/text_icon_button_transition.dart';
-import 'package:listening_app/component/toggle_buttons.dart';
 import 'package:listening_app/view_model/login_view_model.dart';
 
 import '../component/text_button_transition.dart';
@@ -18,9 +17,17 @@ class LoginView extends ConsumerWidget {
     final inputPassword = ref.watch(inputLoginPassword);
     final isPasswordHidden = ref.watch(isHidden);
 
-    return SafeArea(
-      child: Scaffold(
-        body: Padding(
+    Future<bool> login() async {
+      bool isUserExists = await authNotifier.loginUserWithFirebase(
+        inputMail.text,
+        inputPassword.text,
+      );
+      return isUserExists;
+    }
+
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
           padding: const EdgeInsets.all(14.0),
           child: SingleChildScrollView(
             child: Column(
@@ -35,7 +42,6 @@ class LoginView extends ConsumerWidget {
                 const SizedBox(
                   height: 30,
                 ),
-                const CompToggleButton(),
                 const SizedBox(
                   height: 20,
                 ),
@@ -79,18 +85,28 @@ class LoginView extends ConsumerWidget {
                     Expanded(
                       child: SizedBox(
                         height: 50,
-                        child: CompTextButtonTransition(
-                            nextPageName: '/createUserPage',
-                            text: 'ログイン',
-                            backgroundColor: Colors.amber[800],
-                            textColor: Colors.white,
-                            onPressed: () {
-                              authNotifier.loginUserWithFirebase(
-                                inputMail.text,
-                                inputPassword.text,
-                              );
-                              Navigator.pushNamed(context, '/createUserPage');
-                            }),
+                        child: authNotifier.isLoading
+                            ? const Padding(
+                                //TODO:サークルの横幅の調整ができない
+                                padding: EdgeInsets.symmetric(vertical: 2),
+                                child: CircularProgressIndicator(
+                                  color: Colors.blue,
+                                ),
+                              )
+                            : CompTextButtonTransition(
+                                text: 'ログイン',
+                                backgroundColor: Colors.amber[800],
+                                textColor: Colors.white,
+                                onPressed: () {
+                                  login().then((value) {
+                                    if (value) {
+                                      Navigator.pushReplacementNamed(
+                                        context,
+                                        '/home',
+                                      );
+                                    }
+                                  });
+                                }),
                       ),
                     )
                   ],
@@ -120,17 +136,19 @@ class LoginView extends ConsumerWidget {
                     Expanded(
                       child: SizedBox(
                         height: 50,
-                        child: CompTextIconButtonTransition(
-                          text: '新規登録',
-                          icon: const Icon(Icons.account_box_sharp),
-                          nextPageName: '',
-                          backgroundColor: Colors.white,
-                          textColor: Colors.black,
-                          onPressed: () => authNotifier.signupUserWithFirebase(
-                            inputMail.text,
-                            inputPassword.text,
-                          ),
-                        ),
+                        child: authNotifier.isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : CompTextIconButtonTransition(
+                                text: '新規登録',
+                                icon: const Icon(Icons.account_box_sharp),
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/signUpView');
+                                },
+                              ),
                       ),
                     ),
                   ],

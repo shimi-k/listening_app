@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 class CompTextButtonTransition extends StatelessWidget {
   const CompTextButtonTransition({
     required this.text,
-    required this.nextPageName,
     required this.backgroundColor,
     required this.textColor,
     this.onPressed,
     super.key,
   });
   final String text;
-  final String nextPageName;
   final Color? backgroundColor;
   final Color? textColor;
   final VoidCallback? onPressed;
@@ -26,7 +24,6 @@ class CompTextButtonTransition extends StatelessWidget {
           side: const BorderSide(
             color: Colors.black26,
           )),
-      // onPressed: () => Navigator.pushNamed(context, nextPageName),
       onPressed: onPressed,
       child: Text(
         text,

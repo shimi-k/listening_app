@@ -4,7 +4,6 @@ class CompTextIconButtonTransition extends StatelessWidget {
   const CompTextIconButtonTransition({
     required this.text,
     required this.icon,
-    required this.nextPageName,
     required this.backgroundColor,
     required this.textColor,
     required this.onPressed,
@@ -12,7 +11,6 @@ class CompTextIconButtonTransition extends StatelessWidget {
   });
   final String text;
   final Widget icon;
-  final String nextPageName;
   final Color? backgroundColor;
   final Color? textColor;
   final VoidCallback? onPressed;
@@ -28,7 +26,6 @@ class CompTextIconButtonTransition extends StatelessWidget {
           side: const BorderSide(
             color: Colors.black26,
           )),
-      // onPressed: () => Navigator.pushNamed(context, nextPageName),
       onPressed: onPressed,
       icon: icon,
       label: Text(

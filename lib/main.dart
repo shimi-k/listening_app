@@ -2,8 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:listening_app/firebase_options.dart';
-import 'package:listening_app/view/create_user_page.dart';
+import 'package:listening_app/view/home_view.dart';
 import 'package:listening_app/view/login_view.dart';
+import 'package:listening_app/view/sign_up_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginView(),
-        '/createUserPage': (context) => const CreateUserPage(),
+        '/signUpView': (context) => const SignUpView(),
+        '/home': (context) => const HomeView(),
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
