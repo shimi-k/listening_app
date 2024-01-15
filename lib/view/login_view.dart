@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:listening_app/component/lgoin_text.dart';
+import 'package:listening_app/component/text_button_transition.dart';
 import 'package:listening_app/component/text_form.dart';
 import 'package:listening_app/component/text_icon_button_transition.dart';
+import 'package:listening_app/view_model/common/toast.dart';
 import 'package:listening_app/view_model/login_view_model.dart';
-
-import '../component/text_button_transition.dart';
 
 class LoginView extends ConsumerWidget {
   const LoginView({super.key});
@@ -18,6 +18,11 @@ class LoginView extends ConsumerWidget {
     final isPasswordHidden = ref.watch(isHidden);
 
     Future<bool> login() async {
+      if (inputMail.text.isEmpty || inputPassword.text.isEmpty) {
+        //ログイン時のメールアドレスとパスワードが未入力の場合はfalseを返してログイン処理せずにメッセージを表示させる
+        showToast(msg: 'email or password not entered');
+        return false;
+      }
       bool isUserExists = await authNotifier.loginUserWithFirebase(
         inputMail.text,
         inputPassword.text,
@@ -80,36 +85,33 @@ class LoginView extends ConsumerWidget {
                 const SizedBox(
                   height: 60,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 50,
-                        child: authNotifier.isLoading
-                            ? const Padding(
-                                //TODO:サークルの横幅の調整ができない
-                                padding: EdgeInsets.symmetric(vertical: 2),
-                                child: CircularProgressIndicator(
-                                  color: Colors.blue,
-                                ),
-                              )
-                            : CompTextButtonTransition(
-                                text: 'ログイン',
-                                backgroundColor: Colors.amber[800],
-                                textColor: Colors.white,
-                                onPressed: () {
-                                  login().then((value) {
-                                    if (value) {
-                                      Navigator.pushReplacementNamed(
-                                        context,
-                                        '/home',
-                                      );
-                                    }
-                                  });
-                                }),
-                      ),
-                    )
-                  ],
+                Center(
+                  child: authNotifier.isLoading
+                      ? const SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: CircularProgressIndicator(
+                            color: Colors.blue,
+                          ),
+                        )
+                      : SizedBox(
+                          height: 50,
+                          width: 300,
+                          child: CompTextButtonTransition(
+                              text: 'ログイン',
+                              backgroundColor: Colors.amber[800],
+                              textColor: Colors.white,
+                              onPressed: () {
+                                login().then((value) {
+                                  if (value) {
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      '/home',
+                                    );
+                                  }
+                                });
+                              }),
+                        ),
                 ),
                 const SizedBox(
                   height: 20,
@@ -131,27 +133,20 @@ class LoginView extends ConsumerWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 50,
-                        child: authNotifier.isLoading
-                            ? const CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                            : CompTextIconButtonTransition(
-                                text: '新規登録',
-                                icon: const Icon(Icons.account_box_sharp),
-                                backgroundColor: Colors.white,
-                                textColor: Colors.black,
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/signUpView');
-                                },
-                              ),
-                      ),
+                Center(
+                  child: SizedBox(
+                    height: 50,
+                    width: 300,
+                    child: CompTextIconButtonTransition(
+                      text: '新規登録',
+                      icon: const Icon(Icons.account_box_sharp),
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/signUpView');
+                      },
                     ),
-                  ],
+                  ),
                 )
               ],
             ),

@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       initialRoute: '/',
+      //TODO:go_routerを使ったほうがいいかも。スプラッシュ画面も追加する
       routes: {
         '/': (context) => const LoginView(),
         '/signUpView': (context) => const SignUpView(),

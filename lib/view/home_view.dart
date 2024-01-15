@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:listening_app/view_model/home_view_model.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authNotifier = ref.watch(homeAuthProvider);
+
+    Future<void> signOut() async {
+      await authNotifier.signOutFirebase();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -13,7 +21,10 @@ class HomeView extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
-            onTap: () => signOut(),
+            onTap: () {
+              signOut()
+                  .then((_) => Navigator.pushReplacementNamed(context, '/'));
+            },
             child: Container(
               width: double.infinity,
               height: 45,
@@ -32,6 +43,4 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
-
-  void signOut() {} //TODO:
 }

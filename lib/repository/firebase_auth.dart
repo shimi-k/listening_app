@@ -6,9 +6,10 @@ class FirebaseAuthClass extends BaseFirebaseService {
   FirebaseAuth auth = FirebaseAuth.instance;
   String errorMsgInvalid = 'Invalid email or password.';
   String errorMsgEmailUsed = 'The email address already in use.';
+  String errorMsgWeakPassword = 'The password provided is too weak.';
   String errorMsgOhers = 'An error occured:';
 
-  User get loginUser => auth.currentUser!;
+  User? get loginUser => auth.currentUser;
 
   @override
   bool isUserLoggedIn() {
@@ -36,8 +37,12 @@ class FirebaseAuthClass extends BaseFirebaseService {
   }
 
   @override
-  void signOutuser() {
-    auth.signOut();
+  Future<void> signOutuser() async {
+    try {
+      await auth.signOut();
+    } on FirebaseAuthException catch (e) {
+      showToast(msg: e.code);
+    }
   }
 
   @override
@@ -45,11 +50,12 @@ class FirebaseAuthClass extends BaseFirebaseService {
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-
       return userCredential.user;
     } on FirebaseException catch (e) {
       if (e.code == 'email-already-in-use') {
         showToast(msg: errorMsgEmailUsed);
+      } else if (e.code == 'weak-password') {
+        showToast(msg: errorMsgWeakPassword);
       } else {
         showToast(msg: '$errorMsgOhers ${e.code}');
       }
