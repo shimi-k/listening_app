@@ -23,6 +23,8 @@ class AuthProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
+  User? get loggedInUser => fauth.loginUser;
+
   Future<bool> loginUserWithFirebase(String email, String password) async {
     setLoader(true);
 

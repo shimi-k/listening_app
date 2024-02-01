@@ -11,6 +11,15 @@ class FirebaseAuthClass extends BaseFirebaseService {
 
   User? get loginUser => auth.currentUser;
 
+  Future<void> currentUserReload() async {
+    try {
+      await loginUser?.reload();
+      showToast(msg: 'User reload successfuly');
+    } on FirebaseAuthException catch (e) {
+      showToast(msg: 'User reload error: ${e.code}');
+    }
+  }
+
   @override
   bool isUserLoggedIn() {
     if (auth.currentUser != null) {

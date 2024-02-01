@@ -147,7 +147,14 @@ class LoginView extends ConsumerWidget {
                       },
                     ),
                   ),
-                )
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                Center(
+                  child: Text(authNotifier.loggedInUser?.email ??
+                      'No user is currently Logged in'),
+                ),
               ],
             ),
           ),
