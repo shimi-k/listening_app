@@ -6,16 +6,19 @@ import 'package:listening_app/view_model/common/liseten_item_genre.dart';
 import 'package:listening_app/view_model/common/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+final bigGenreList = ['恋愛', 'ファンタジー', '文学', 'SF', 'その他', 'ノンジャンル'];
+
 final homeAuthProvider = ChangeNotifierProvider((ref) => HomeAuthProvider());
 
 class HomeAuthProvider extends ChangeNotifier {
   FirebaseAuthClass fauth = FirebaseAuthClass();
   String msgSignOut = 'Sign out successfuly';
 
-  late User? loggedInUser = fauth.loginUser;
+  User? get loggedInUser => fauth.loginUser;
 
   Future<void> userReload() async {
     fauth.currentUserReload();
+    notifyListeners();
   }
 
   Future<void> signOutFirebase() async {
@@ -31,7 +34,8 @@ class DetailWebAccess {
   final String url = 'https://ncode.syosetu.com/';
 
   Future<void> openUrl(String ncode) async {
-    final webUrl = Uri.parse(url + ncode);
+    //ncodeは英字が大文字になっているため小文字に変換してurlにする
+    final webUrl = Uri.parse(url + ncode.toLowerCase());
     if (await canLaunchUrl(webUrl)) {
       await launchUrl(webUrl);
     } else {

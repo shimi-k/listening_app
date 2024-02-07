@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:listening_app/repository/abstract/base_firebase_service.dart';
 import 'package:listening_app/view_model/common/toast.dart';
+
+final authProvider = Provider((ref) => FirebaseAuth.instance);
 
 class FirebaseAuthClass extends BaseFirebaseService {
   FirebaseAuth auth = FirebaseAuth.instance;

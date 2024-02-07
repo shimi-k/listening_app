@@ -26,7 +26,6 @@ class ListenItemList extends _$ListenItemList {
       final list = data.map((d) => ListenItem.fromJson(d)).toList();
 
       return list;
-      // jsonDecode(response.data) as Map<String, dynamic>;
     } else {
       showToast(msg: 'API response error. error status:${response.statusCode}');
       return [];
@@ -39,6 +38,33 @@ class ListenItemList extends _$ListenItemList {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() {
       return _fetchData(order);
+    });
+  }
+
+  Future<List<ListenItem>> _genreFilterFetchData(String genre) async {
+    final url =
+        'https://api.syosetu.com/novelapi/api/?out=json&lim=10&of=t-s-n-bg-f-ah-ua&biggenre=$genre';
+
+    var response = await Dio().get(url);
+
+    if (response.statusCode == 200) {
+      final data = response.data as List;
+      //取得したjsonデータの１つ目のリストは対象外のため削除しておく
+      data.removeAt(0);
+      final list = data.map((d) => ListenItem.fromJson(d)).toList();
+
+      return list;
+    } else {
+      showToast(msg: 'API response error. error status:${response.statusCode}');
+      return [];
+    }
+  }
+
+  //ジャンルでフィルターしてデータを取得する
+  Future<void> filterFetchData(String genre) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() {
+      return _genreFilterFetchData(genre);
     });
   }
 }
