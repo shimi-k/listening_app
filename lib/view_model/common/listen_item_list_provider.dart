@@ -47,10 +47,10 @@ class ListenItemList extends _$ListenItemList {
 
   //外部用APIデータ取得
   // AsyncValue.guardに引き渡すのはプライベートのデート取得メソッド。Function()型の必要がある
-  Future<void> fetchData(String order) async {
+  Future<void> fetchData(String keyword) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() {
-      return _fetchData(order);
+      return _fetchData(keyword);
     });
   }
 

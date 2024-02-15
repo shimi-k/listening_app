@@ -6,7 +6,7 @@ part of 'listen_item_list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listenItemListHash() => r'bc421aed71523c53017f2df69283ebd772bda37a';
+String _$listenItemListHash() => r'b8dff62b4a609c104733321f3ce0b60c3d16e371';
 
 /// Copied from Dart SDK
 class _SystemHash {

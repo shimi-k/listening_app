@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:listening_app/model/listen_item.dart';
-import 'package:listening_app/view_model/common/liseten_item_genre.dart';
 import 'package:listening_app/view_model/common/listen_item_list_provider.dart';
 import 'package:listening_app/view_model/home_view_model.dart';
 
@@ -26,13 +24,14 @@ class HomeView extends ConsumerWidget {
         return Scaffold(
           body: SafeArea(
               child: Container(
-            color: Colors.black,
-            padding: const EdgeInsets.all(16),
+            color: Colors.blueGrey,
             height: size.height,
             child: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
+                    backgroundColor: Colors.blueGrey[100],
+                    pinned: true,
                     title: const Text('Home'),
                     actions: [
                       IconButton(
@@ -56,7 +55,19 @@ class HomeView extends ConsumerWidget {
                               Icons.account_circle,
                               size: 150,
                             ),
-                            Text(authNotifier.loggedInUser?.email ?? 'No User'),
+                            Text(
+                              authNotifier.loggedInUser?.email ?? 'No User',
+                              style: const TextStyle(fontSize: 18.0),
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  signOut;
+                                  Navigator.pushReplacementNamed(context, '/');
+                                },
+                                child: const Text(
+                                  'Sing out',
+                                  style: TextStyle(fontSize: 14.0),
+                                )),
                           ],
                         ),
                       ),
@@ -164,31 +175,42 @@ class HomeView extends ConsumerWidget {
   //各ジャンル（タブ）ごとにAPI取得結果を表示させるためにRiverpodの.family（引数に対して一意のインスタンスになるため）で表示している
   Widget fetchDataList(String keyword, WidgetRef ref) {
     final itemList = ref.watch(listenItemListProvider(keyword));
-    final genre = ListenItemGenre();
+    // final genre = ListenItemGenre();
     final detailWebAccess = DetailWebAccess();
 
     return Container(
       padding: const EdgeInsets.all(8.0),
-      child: ListView.builder(
-        itemBuilder: (context, index) {
-          return itemList.when(
-            data: (data) {
-              final item = data[index];
-              return Card(
-                child: ListTile(
-                  leading: Text(genre.getGenre(item.biggenre ?? 0)),
-                  title: Text(item.title ?? ''),
-                  onTap: () => detailWebAccess.openUrl(item.ncode ?? ''),
-                ),
-              );
-            },
-            error: (error, stackTrace) => Text('$error'),
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+      child: RefreshIndicator(
+        onRefresh: () async {
+          //TODO:表示リストを引っ張って更新できるように実装したい。だけど.familyのプロバイダーを使っているのでうまくできない。
+          // return ref.read(listenItemListProvider(keyword));
+          return await Future.delayed(Duration(seconds: 2));
         },
-        itemCount: itemList.value?.length,
+        child: ListView.builder(
+          itemBuilder: (context, index) {
+            return itemList.when(
+              data: (data) {
+                final item = data[index];
+                return Card(
+                  child: ListTile(
+                    // leading: Text(genre.getGenre(item.biggenre ?? 0)),
+                    title: Text(
+                      item.title ?? '',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(item.story ?? ''),
+                    onTap: () => detailWebAccess.openUrl(item.ncode ?? ''),
+                  ),
+                );
+              },
+              error: (error, stackTrace) => Text('$error'),
+              loading: () => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          },
+          itemCount: itemList.value?.length,
+        ),
       ),
     );
   }
