@@ -1,151 +1,194 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:listening_app/model/listen_item.dart';
+import 'package:listening_app/view_model/common/liseten_item_genre.dart';
 import 'package:listening_app/view_model/common/listen_item_list_provider.dart';
 import 'package:listening_app/view_model/home_view_model.dart';
 
 class HomeView extends ConsumerWidget {
-  const HomeView({super.key});
+  HomeView({super.key});
+
+  final List<Widget> tabs = tabList.map((e) => Tab(text: e)).toList();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authNotifier = ref.watch(homeAuthProvider);
-    final itemList = ref.watch(listenItemListProvider);
-    final detailWebAccess = DetailWebAccess();
-    final genre = ListenItemGenre();
+
     final Size size = MediaQuery.of(context).size;
 
     Future<void> signOut() async {
       await authNotifier.signOutFirebase();
     }
 
-    return Scaffold(
-      body: SafeArea(
-          child: Container(
-        height: size.height,
-        child: Column(
-          children: [
-            BigGenreScroller(),
-            Expanded(
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  return itemList.when(
-                    data: (data) {
-                      final item = data[index];
-                      return Card(
-                        child: ListTile(
-                          title: Text(item.title ?? ''),
-                        ),
-                      );
-                    },
-                    error: (error, stackTrace) => Text('$error'),
-                    loading: () => const Center(
-                      child: CircularProgressIndicator(),
+    return DefaultTabController(
+      length: tabList.length,
+      child: Builder(builder: (context) {
+        return Scaffold(
+          body: SafeArea(
+              child: Container(
+            color: Colors.black,
+            padding: const EdgeInsets.all(16),
+            height: size.height,
+            child: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return <Widget>[
+                  SliverAppBar(
+                    title: const Text('Home'),
+                    actions: [
+                      IconButton(
+                          onPressed: () {}, icon: const Icon(Icons.search)),
+                      IconButton(
+                          onPressed: () {}, icon: const Icon(Icons.bookmark)),
+                    ],
+                    bottom: TabBar(
+                      tabs: tabs,
+                      isScrollable: true,
                     ),
-                  );
-                },
-                itemCount: itemList.value?.length,
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      color: Colors.blue,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            const Icon(
+                              Icons.account_circle,
+                              size: 150,
+                            ),
+                            Text(authNotifier.loggedInUser?.email ?? 'No User'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ];
+              },
+              body: TabBarView(
+                children: [
+                  //'New'タブ
+                  fetchDataList('new', ref),
+                  //'恋愛'タブ
+                  fetchDataList('1', ref),
+                  //'ファンタジー'タブ
+                  fetchDataList('2', ref),
+                  //'文学'タブ
+                  fetchDataList('3', ref),
+                  //'SF'タブ
+                  fetchDataList('4', ref),
+                  //'その他'タブ
+                  fetchDataList('98', ref),
+                  //'ノンジャンル'タブ
+                  fetchDataList('99', ref),
+                ],
               ),
             ),
-          ],
-        ),
-      )
+          )
 
-          //TODO:縦スクロールのみでAPIで取得したリストのみのパターン
-          // CustomScrollView(
-          //   scrollDirection: Axis.vertical,
-          //   slivers: <Widget>[
-          //     SliverAppBar(
-          //       title: const Text('Home'),
-          //       actions: [
-          //         IconButton(
-          //           onPressed: () => authNotifier.userReload(),
-          //           icon: const Icon(Icons.replay_outlined),
-          //         ),
-          //         TextButton(
-          //           onPressed: () async {
-          //             await signOut();
-          //             //Futureで安全にBuildするためにマウントされているか確認することでエラー回避している
-          //             if (context.mounted) {
-          //               Navigator.pushReplacementNamed(context, '/');
-          //             }
-          //           },
-          //           child: const Text('Sign out'),
-          //         ),
-          //       ],
-          //     ),
-          //     SliverToBoxAdapter(
-          //       child: Container(
-          //         height: 200,
-          //         color: Colors.blue,
-          //         child: Column(
-          //           children: [
-          //             const Icon(
-          //               Icons.account_circle,
-          //               size: 150,
-          //             ),
-          //             Text(authNotifier.loggedInUser?.email ?? ''),
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //     SliverList(
-          //       delegate: SliverChildBuilderDelegate(
-          //         (context, index) {
-          //           return itemList.when(
-          //             data: ((data) {
-          //               final item = data[index];
-          //               return Card(
-          //                 color: Colors.blue[100],
-          //                 child: ListTile(
-          //                   dense: true,
-          //                   isThreeLine: true,
-          //                   leading: Text(genre.getGenre(item.biggenre ?? 0)),
-          //                   title: Text(item.title ?? ''),
-          //                   subtitle: Text(item.story ?? ''),
-          //                   trailing: Text(
-          //                       '${item.updatedAt?.year}/${item.updatedAt?.month}/${item.updatedAt?.day}'),
-          //                   onTap: () =>
-          //                       detailWebAccess.openUrl(item.ncode ?? ''),
-          //                 ),
-          //               );
-          //             }),
-          //             error: (error, stackTrace) => Text('$error'),
-          //             loading: () => const Center(
-          //               child: CircularProgressIndicator(),
-          //             ),
-          //           );
-          //         },
-          //         childCount: itemList.value?.length ?? 10,
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          ),
+              //TODO:縦スクロールのみでAPIで取得したリストのみのパターン
+              // CustomScrollView(
+              //   scrollDirection: Axis.vertical,
+              //   slivers: <Widget>[
+              //     SliverAppBar(
+              //       title: const Text('Home'),
+              //       actions: [
+              //         IconButton(
+              //           onPressed: () => authNotifier.userReload(),
+              //           icon: const Icon(Icons.replay_outlined),
+              //         ),
+              //         TextButton(
+              //           onPressed: () async {
+              //             await signOut();
+              //             //Futureで安全にBuildするためにマウントされているか確認することでエラー回避している
+              //             if (context.mounted) {
+              //               Navigator.pushReplacementNamed(context, '/');
+              //             }
+              //           },
+              //           child: const Text('Sign out'),
+              //         ),
+              //       ],
+              //     ),
+              //     SliverToBoxAdapter(
+              //       child: Container(
+              //         height: 200,
+              //         color: Colors.blue,
+              //         child: Column(
+              //           children: [
+              //             const Icon(
+              //               Icons.account_circle,
+              //               size: 150,
+              //             ),
+              //             Text(authNotifier.loggedInUser?.email ?? ''),
+              //           ],
+              //         ),
+              //       ),
+              //     ),
+              //     SliverList(
+              //       delegate: SliverChildBuilderDelegate(
+              //         (context, index) {
+              //           return itemList.when(
+              //             data: ((data) {
+              //               final item = data[index];
+              //               return Card(
+              //                 color: Colors.blue[100],
+              //                 child: ListTile(
+              //                   dense: true,
+              //                   isThreeLine: true,
+              //                   leading: Text(genre.getGenre(item.biggenre ?? 0)),
+              //                   title: Text(item.title ?? ''),
+              //                   subtitle: Text(item.story ?? ''),
+              //                   trailing: Text(
+              //                       '${item.updatedAt?.year}/${item.updatedAt?.month}/${item.updatedAt?.day}'),
+              //                   onTap: () =>
+              //                       detailWebAccess.openUrl(item.ncode ?? ''),
+              //                 ),
+              //               );
+              //             }),
+              //             error: (error, stackTrace) => Text('$error'),
+              //             loading: () => const Center(
+              //               child: CircularProgressIndicator(),
+              //             ),
+              //           );
+              //         },
+              //         childCount: itemList.value?.length ?? 10,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              ),
+        );
+      }),
     );
   }
-}
 
-class BigGenreScroller extends StatelessWidget {
-  const BigGenreScroller({super.key});
+  //各ジャンル（タブ）ごとにAPI取得結果を表示させるためにRiverpodの.family（引数に対して一意のインスタンスになるため）で表示している
+  Widget fetchDataList(String keyword, WidgetRef ref) {
+    final itemList = ref.watch(listenItemListProvider(keyword));
+    final genre = ListenItemGenre();
+    final detailWebAccess = DetailWebAccess();
 
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: BouncingScrollPhysics(),
-      child: Container(
-        padding: EdgeInsets.all(8),
-        child: Row(
-          children: bigGenreList.map((g) {
-            return Card(
-              color: Colors.amber,
-              child: Text(
-                g,
-                style: TextStyle(fontSize: 30),
-              ),
-            );
-          }).toList(),
-        ),
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+          return itemList.when(
+            data: (data) {
+              final item = data[index];
+              return Card(
+                child: ListTile(
+                  leading: Text(genre.getGenre(item.biggenre ?? 0)),
+                  title: Text(item.title ?? ''),
+                  onTap: () => detailWebAccess.openUrl(item.ncode ?? ''),
+                ),
+              );
+            },
+            error: (error, stackTrace) => Text('$error'),
+            loading: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        },
+        itemCount: itemList.value?.length,
       ),
     );
   }

@@ -6,7 +6,7 @@ import 'package:listening_app/view_model/common/liseten_item_genre.dart';
 import 'package:listening_app/view_model/common/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final bigGenreList = ['恋愛', 'ファンタジー', '文学', 'SF', 'その他', 'ノンジャンル'];
+final tabList = ['New', '恋愛', 'ファンタジー', '文学', 'SF', 'その他', 'ノンジャンル'];
 
 final homeAuthProvider = ChangeNotifierProvider((ref) => HomeAuthProvider());
 
