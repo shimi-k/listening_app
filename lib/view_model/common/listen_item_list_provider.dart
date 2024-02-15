@@ -8,15 +8,28 @@ part 'listen_item_list_provider.g.dart';
 @riverpod
 class ListenItemList extends _$ListenItemList {
   @override
-  FutureOr<List<ListenItem>> build() async {
-    return await _fetchData('new');
+  FutureOr<List<ListenItem>> build(String keyword) async {
+    return await _fetchData(keyword);
   }
 
   //初期化用APIデータの取得
   //プライベートの理由はbuild()内では内部的にguard()で実装されているらしいので外部用と分ける。意味あるのか。。？
-  Future<List<ListenItem>> _fetchData(String order) async {
-    final url =
-        'https://api.syosetu.com/novelapi/api/?out=json&lim=10&of=t-s-n-bg-f-ah-ua&order=$order';
+  Future<List<ListenItem>> _fetchData(String keyword) async {
+    var url = '';
+
+    if (keyword == 'new') {
+      url =
+          'https://api.syosetu.com/novelapi/api/?out=json&lim=10&of=t-s-n-bg-f-ah-ua&order=$keyword';
+    } else {
+      url =
+          'https://api.syosetu.com/novelapi/api/?out=json&lim=10&of=t-s-n-bg-f-ah-ua&biggenre=$keyword';
+    }
+
+    if (url.isEmpty) {
+      showToast(msg: 'URL取得失敗 url:$url');
+      return [];
+    }
+
     var response = await Dio().get(url);
 
     if (response.statusCode == 200) {
@@ -41,30 +54,31 @@ class ListenItemList extends _$ListenItemList {
     });
   }
 
-  Future<List<ListenItem>> _genreFilterFetchData(String genre) async {
-    final url =
-        'https://api.syosetu.com/novelapi/api/?out=json&lim=10&of=t-s-n-bg-f-ah-ua&biggenre=$genre';
+  // FIXME:fetchData関数の条件分岐でURLを分岐できるようしたため不要になりそう。削除予定。
+  // Future<List<ListenItem>> _genreFilterFetchData(String genre) async {
+  //   final url =
+  //       'https://api.syosetu.com/novelapi/api/?out=json&lim=10&of=t-s-n-bg-f-ah-ua&biggenre=$genre';
 
-    var response = await Dio().get(url);
+  //   var response = await Dio().get(url);
 
-    if (response.statusCode == 200) {
-      final data = response.data as List;
-      //取得したjsonデータの１つ目のリストは対象外のため削除しておく
-      data.removeAt(0);
-      final list = data.map((d) => ListenItem.fromJson(d)).toList();
+  //   if (response.statusCode == 200) {
+  //     final data = response.data as List;
+  //     //取得したjsonデータの１つ目のリストは対象外のため削除しておく
+  //     data.removeAt(0);
+  //     final list = data.map((d) => ListenItem.fromJson(d)).toList();
 
-      return list;
-    } else {
-      showToast(msg: 'API response error. error status:${response.statusCode}');
-      return [];
-    }
-  }
+  //     return list;
+  //   } else {
+  //     showToast(msg: 'API response error. error status:${response.statusCode}');
+  //     return [];
+  //   }
+  // }
 
-  //ジャンルでフィルターしてデータを取得する
-  Future<void> filterFetchData(String genre) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() {
-      return _genreFilterFetchData(genre);
-    });
-  }
+  // //ジャンルでフィルターしてデータを取得する
+  // Future<void> filterFetchData(String genre) async {
+  //   state = const AsyncLoading();
+  //   state = await AsyncValue.guard(() {
+  //     return _genreFilterFetchData(genre);
+  //   });
+  // }
 }

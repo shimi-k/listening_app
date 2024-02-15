@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginView(),
         '/signUpView': (context) => const SignUpView(),
-        '/home': (context) => const HomeView(),
+        '/home': (context) => HomeView(),
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
