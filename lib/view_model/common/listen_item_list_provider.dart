@@ -15,14 +15,16 @@ class ListenItemList extends _$ListenItemList {
   //初期化用APIデータの取得
   //プライベートの理由はbuild()内では内部的にguard()で実装されているらしいので外部用と分ける。意味あるのか。。？
   Future<List<ListenItem>> _fetchData(String keyword) async {
+    //取得するリストの数
+    int lim = 20;
     var url = '';
 
     if (keyword == 'new') {
       url =
-          'https://api.syosetu.com/novelapi/api/?out=json&lim=10&of=t-s-n-bg-f-ah-ua&order=$keyword';
+          'https://api.syosetu.com/novelapi/api/?out=json&lim=$lim&of=t-s-n-bg-f-ah-ua&order=$keyword';
     } else {
       url =
-          'https://api.syosetu.com/novelapi/api/?out=json&lim=10&of=t-s-n-bg-f-ah-ua&biggenre=$keyword';
+          'https://api.syosetu.com/novelapi/api/?out=json&lim=$lim&of=t-s-n-bg-f-ah-ua&biggenre=$keyword';
     }
 
     if (url.isEmpty) {
@@ -53,32 +55,4 @@ class ListenItemList extends _$ListenItemList {
       return _fetchData(keyword);
     });
   }
-
-  // FIXME:fetchData関数の条件分岐でURLを分岐できるようしたため不要になりそう。削除予定。
-  // Future<List<ListenItem>> _genreFilterFetchData(String genre) async {
-  //   final url =
-  //       'https://api.syosetu.com/novelapi/api/?out=json&lim=10&of=t-s-n-bg-f-ah-ua&biggenre=$genre';
-
-  //   var response = await Dio().get(url);
-
-  //   if (response.statusCode == 200) {
-  //     final data = response.data as List;
-  //     //取得したjsonデータの１つ目のリストは対象外のため削除しておく
-  //     data.removeAt(0);
-  //     final list = data.map((d) => ListenItem.fromJson(d)).toList();
-
-  //     return list;
-  //   } else {
-  //     showToast(msg: 'API response error. error status:${response.statusCode}');
-  //     return [];
-  //   }
-  // }
-
-  // //ジャンルでフィルターしてデータを取得する
-  // Future<void> filterFetchData(String genre) async {
-  //   state = const AsyncLoading();
-  //   state = await AsyncValue.guard(() {
-  //     return _genreFilterFetchData(genre);
-  //   });
-  // }
 }

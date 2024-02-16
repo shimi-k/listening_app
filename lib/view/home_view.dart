@@ -61,7 +61,7 @@ class HomeView extends ConsumerWidget {
                             ),
                             TextButton(
                                 onPressed: () {
-                                  signOut;
+                                  signOut();
                                   Navigator.pushReplacementNamed(context, '/');
                                 },
                                 child: const Text(
@@ -174,7 +174,10 @@ class HomeView extends ConsumerWidget {
 
   //各ジャンル（タブ）ごとにAPI取得結果を表示させるためにRiverpodの.family（引数に対して一意のインスタンスになるため）で表示している
   Widget fetchDataList(String keyword, WidgetRef ref) {
+    //keywordを渡してAPI取得して結果を監視する
     final itemList = ref.watch(listenItemListProvider(keyword));
+    //riverpodのメソッド使用用
+    final itemListNotifier = ref.read(listenItemListProvider(keyword).notifier);
     // final genre = ListenItemGenre();
     final detailWebAccess = DetailWebAccess();
 
@@ -182,9 +185,8 @@ class HomeView extends ConsumerWidget {
       padding: const EdgeInsets.all(8.0),
       child: RefreshIndicator(
         onRefresh: () async {
-          //TODO:表示リストを引っ張って更新できるように実装したい。だけど.familyのプロバイダーを使っているのでうまくできない。
-          // return ref.read(listenItemListProvider(keyword));
-          return await Future.delayed(Duration(seconds: 2));
+          //タブごとに表示している一覧リストを再表示
+          await itemListNotifier.fetchData(keyword);
         },
         child: ListView.builder(
           itemBuilder: (context, index) {

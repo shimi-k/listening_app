@@ -5,6 +5,7 @@ import 'package:listening_app/firebase_options.dart';
 import 'package:listening_app/view/home_view.dart';
 import 'package:listening_app/view/login_view.dart';
 import 'package:listening_app/view/sign_up_view.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
